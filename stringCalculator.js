@@ -1,35 +1,54 @@
 class StringCalculator {
-  add(numbers) {
-    if (!numbers) return 0;
-
-    let delimiter = /,|\n/;
-    if (numbers.startsWith("//")) {
-      const match = numbers.match(/^\/\/(\[.*?\]|\S)\n/);
-      if (match) {
-        let customDelimiter = match[1];
-        if (customDelimiter.startsWith("[")) {
-          customDelimiter = customDelimiter
-            .slice(1, -1)
-            .split("][")
-            .map(d => d.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"))
-            .join("|");
-        } else {
-          customDelimiter = customDelimiter.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
-        }
-        delimiter = new RegExp(customDelimiter);
-        numbers = numbers.split("\n").slice(1).join("\n");
+    add(input) {
+      if (!input) return 0;
+  
+      const { numbers, delimiter } = this._parseInput(input);
+      const numArray = numbers
+        .split(delimiter)
+        .map(Number)
+        .filter(n => !isNaN(n));
+  
+      this._checkForNegatives(numArray);
+  
+      return numArray
+        .filter(n => n <= 1000)
+        .reduce((sum, num) => sum + num, 0);
+    }
+  
+    _parseInput(input) {
+      let delimiter = /,|\n/;
+      let numbers = input;
+  
+      if (input.startsWith("//")) {
+        const [, custom, rest] = input.match(/^\/\/(.*)\n(.*)/);
+        delimiter = this._parseCustomDelimiters(custom);
+        numbers = rest;
+      }
+  
+      return { numbers, delimiter };
+    }
+  
+    _parseCustomDelimiters(custom) {
+      if (custom.startsWith("[")) {
+        // Multiple delimiters
+        return new RegExp(
+          custom
+            .match(/\[.*?\]/g)
+            .map(d => d.slice(1, -1).replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"))
+            .join("|")
+        );
+      } 
+      // Single custom delimiter
+      return new RegExp(custom.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"));
+    }
+  
+    _checkForNegatives(numbers) {
+      const negatives = numbers.filter(n => n < 0);
+      if (negatives.length) {
+        throw new Error(`Negatives not allowed: ${negatives.join(",")}`);
       }
     }
-
-    const numArray = numbers.split(delimiter).map(num => parseInt(num, 10)).filter(n => !isNaN(n));
-
-    const negatives = numArray.filter(n => n < 0);
-    if (negatives.length) {
-      throw new Error(`Negatives not allowed: ${negatives.join(",")}`);
-    }
-
-    return numArray.filter(n => n <= 1000).reduce((sum, num) => sum + num, 0);
   }
-}
-
-module.exports = StringCalculator;
+  
+  module.exports = StringCalculator;
+  
