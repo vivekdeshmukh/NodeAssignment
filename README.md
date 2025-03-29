@@ -4,6 +4,7 @@ Implementation of the String Calculator TDD Kata using Node.js and Jest for test
 
 Steps:
 1.Write tests first (TDD approach).
+
 2.Implement the StringCalculator class.
 
 1. Install Jest (if not installed)
@@ -17,9 +18,9 @@ npx jest
 
 
 Features Implemented:
-✔ Returns 0 for an empty string
-✔ Returns sum of numbers separated by , or \n
-✔ Supports custom single-character or multi-character delimiters
-✔ Throws error for negative numbers
-✔ Ignores numbers greater than 1000
-✔ Supports multiple custom delimiters
+1. Returns 0 for an empty string
+2. Returns sum of numbers separated by , or \n
+3. Supports custom single-character or multi-character delimiters
+4. Throws error for negative numbers
+5. Ignores numbers greater than 1000
+6. Supports multiple custom delimiters
